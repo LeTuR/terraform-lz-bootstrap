@@ -1,0 +1,156 @@
+---
+name: Continuous Delivery
+on:
+  workflow_call:
+    inputs:
+      terraform_action:
+        description: 'Terraform Action to perform'
+        default: 'apply'
+        type: string
+      root_module_folder_relative_path:
+        description: 'Root Module Folder Relative Path'
+        default: '.'
+        type: string
+      azure_client_id:
+        description: 'Azure Client ID'
+        type: string
+        required: true
+      azure_subscription_id:
+        description: 'Azure Subscription ID'
+        type: string
+        required: true
+      azure_tenant_id:
+        description: 'Azure Tenant ID'
+        type: string
+        required: true
+      backend_azure_resource_group_name:
+        description: 'Backend Azure Resource Group Name'
+        type: string
+        required: true
+      backend_azure_storage_account_name:
+        description: 'Backend Azure Storage Account Name'
+        type: string
+        required: true
+      backend_azure_storage_account_container_name:
+        description: 'Backend Azure Storage Account Container Name'
+        type: string
+        required: true
+
+jobs:
+  plan:
+    name: Plan with Terraform
+    runs-on:
+      ${runner_name}
+    concurrency: "$${{inputs.backend_azure_storage_account_name}}-$${{inputs.backend_azure_storage_account_container_name}}"
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      ARM_CLIENT_ID: "$${{ vars.azure_client_id }}"
+      ARM_SUBSCRIPTION_ID: "$${{ vars.azure_subscription_id }}"
+      ARM_TENANT_ID: "$${{ vars.azure_tenant_id }}"
+      ARM_USE_AZUREAD: true
+      ARM_USE_OIDC: true
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: |
+          terraform \
+          -chdir="$${{inputs.root_module_folder_relative_path}}" \
+          init \
+          -backend-config="resource_group_name=$${{inputs.backend_azure_resource_group_name}}" \
+          -backend-config="storage_account_name=$${{inputs.backend_azure_storage_account_name}}" \
+          -backend-config="container_name=$${{inputs.backend_azure_storage_account_container_name}}" \
+          -backend-config="key=terraform.tfstate"
+
+      - name: Terraform Plan for $${{ inputs.terraform_action == 'destroy' && 'Destroy' || 'Apply' }}
+        run: |
+          # shellcheck disable=SC2086
+          terraform \
+          -chdir="$${{inputs.root_module_folder_relative_path}}" \
+          plan \
+          -out=tfplan \
+          -input=false \
+          $${{ inputs.terraform_action == 'destroy' && '-destroy' || '' }}
+
+      - name: Create Module Artifact
+        run: |
+          $stagingDirectory = "staging"
+          $rootModuleFolder = "$${{inputs.root_module_folder_relative_path}}"
+          New-Item -Path . -Name $stagingDirectory -ItemType "directory"
+          Copy-Item -Path "./*" -Exclude @(".git", ".terraform", ".github",  $stagingDirectory) -Recurse -Destination "./$stagingDirectory"
+
+          $rootModuleFolderTerraformFolder = Join-Path -Path "./$stagingDirectory" -ChildPath $rootModuleFolder -AdditionalChildPath ".terraform"
+          if(Test-Path -Path $rootModuleFolderTerraformFolder) {
+            Remove-Item -Path $rootModuleFolderTerraformFolder -Recurse -Force
+          }
+
+        shell: pwsh
+
+      - name: Publish Module Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: module
+          path: ./staging/
+
+      - name: Show the Plan for Review
+        run: |
+          terraform \
+          -chdir="$${{inputs.root_module_folder_relative_path}}" \
+          show \
+          tfplan
+
+  apply:
+    needs: plan
+    name: Apply with Terraform
+    runs-on:
+      ${runner_name}
+    concurrency: "$${{inputs.backend_azure_storage_account_name}}-$${{inputs.backend_azure_storage_account_container_name}}"
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      ARM_CLIENT_ID: "$${{ vars.azure_client_id }}"
+      ARM_SUBSCRIPTION_ID: "$${{ vars.azure_subscription_id }}"
+      ARM_TENANT_ID: "$${{ vars.azure_tenant_id }}"
+      ARM_USE_AZUREAD: true
+      ARM_USE_OIDC: true
+      AZAPI_RETRY_GET_AFTER_PUT_MAX_TIME: "60m" # Accounts for eventually consistent management group permissions propagation
+
+    steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: module
+
+      - name: Install Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_wrapper: false
+
+      - name: Terraform Init
+        run: |
+          terraform \
+          -chdir="$${{inputs.root_module_folder_relative_path}}" \
+          init \
+          -backend-config="resource_group_name=$${{inputs.backend_azure_resource_group_name}}" \
+          -backend-config="storage_account_name=$${{inputs.backend_azure_storage_account_name}}" \
+          -backend-config="container_name=$${{inputs.backend_azure_storage_account_container_name}}" \
+          -backend-config="key=terraform.tfstate"
+
+      - name: Terraform $${{ inputs.terraform_action == 'destroy' && 'Destroy' || 'Apply' }}
+        run: |
+          terraform \
+          -chdir="$${{inputs.root_module_folder_relative_path}}" \
+          apply \
+          -input=false \
+          -auto-approve \
+          tfplan
