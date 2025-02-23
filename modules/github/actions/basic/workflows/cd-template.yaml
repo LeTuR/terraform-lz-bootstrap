@@ -11,44 +11,20 @@ on:
         description: 'Root Module Folder Relative Path'
         default: '.'
         type: string
-      azure_client_id:
-        description: 'Azure Client ID'
-        type: string
-        required: true
-      azure_subscription_id:
-        description: 'Azure Subscription ID'
-        type: string
-        required: true
-      azure_tenant_id:
-        description: 'Azure Tenant ID'
-        type: string
-        required: true
-      backend_azure_resource_group_name:
-        description: 'Backend Azure Resource Group Name'
-        type: string
-        required: true
-      backend_azure_storage_account_name:
-        description: 'Backend Azure Storage Account Name'
-        type: string
-        required: true
-      backend_azure_storage_account_container_name:
-        description: 'Backend Azure Storage Account Container Name'
-        type: string
-        required: true
 
 jobs:
   plan:
     name: Plan with Terraform
     runs-on:
       ${runner_name}
-    concurrency: "$${{inputs.backend_azure_storage_account_name}}-$${{inputs.backend_azure_storage_account_container_name}}"
+    concurrency: ${backend_azure_storage_account_container_name}
     permissions:
       id-token: write
       contents: read
     env:
-      ARM_CLIENT_ID: "$${{ vars.azure_client_id }}"
-      ARM_SUBSCRIPTION_ID: "$${{ vars.azure_subscription_id }}"
-      ARM_TENANT_ID: "$${{ vars.azure_tenant_id }}"
+      ARM_CLIENT_ID: "$${{ vars.AZURE_CLIENT_ID_APPLY }}"
+      ARM_SUBSCRIPTION_ID: "$${{ vars.AZURE_SUBSCRIPTION_ID }}"
+      ARM_TENANT_ID: "$${{ vars.AZURE_TENANT_ID }}"
       ARM_USE_AZUREAD: true
       ARM_USE_OIDC: true
 
@@ -66,9 +42,9 @@ jobs:
           terraform \
           -chdir="$${{inputs.root_module_folder_relative_path}}" \
           init \
-          -backend-config="resource_group_name=$${{inputs.backend_azure_resource_group_name}}" \
-          -backend-config="storage_account_name=$${{inputs.backend_azure_storage_account_name}}" \
-          -backend-config="container_name=$${{inputs.backend_azure_storage_account_container_name}}" \
+          -backend-config="resource_group_name=$${{vars.BACKEND_AZURE_RESOURCE_GROUP_NAME}}" \
+          -backend-config="storage_account_name=$${{vars.BACKEND_AZURE_STORAGE_ACCOUNT_NAME}}" \
+          -backend-config="container_name=$${{vars.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME}}" \
           -backend-config="key=terraform.tfstate"
 
       - name: Terraform Plan for $${{ inputs.terraform_action == 'destroy' && 'Destroy' || 'Apply' }}
@@ -113,14 +89,14 @@ jobs:
     name: Apply with Terraform
     runs-on:
       ${runner_name}
-    concurrency: "$${{inputs.backend_azure_storage_account_name}}-$${{inputs.backend_azure_storage_account_container_name}}"
+    concurrency: ${backend_azure_storage_account_container_name}
     permissions:
       id-token: write
       contents: read
     env:
-      ARM_CLIENT_ID: "$${{ vars.azure_client_id }}"
-      ARM_SUBSCRIPTION_ID: "$${{ vars.azure_subscription_id }}"
-      ARM_TENANT_ID: "$${{ vars.azure_tenant_id }}"
+      ARM_CLIENT_ID: "$${{ vars.AZURE_CLIENT_ID_APPLY }}"
+      ARM_SUBSCRIPTION_ID: "$${{ vars.AZURE_SUBSCRIPTION_ID }}"
+      ARM_TENANT_ID: "$${{ vars.AZURE_TENANT_ID }}"
       ARM_USE_AZUREAD: true
       ARM_USE_OIDC: true
       AZAPI_RETRY_GET_AFTER_PUT_MAX_TIME: "60m" # Accounts for eventually consistent management group permissions propagation
@@ -141,9 +117,9 @@ jobs:
           terraform \
           -chdir="$${{inputs.root_module_folder_relative_path}}" \
           init \
-          -backend-config="resource_group_name=$${{inputs.backend_azure_resource_group_name}}" \
-          -backend-config="storage_account_name=$${{inputs.backend_azure_storage_account_name}}" \
-          -backend-config="container_name=$${{inputs.backend_azure_storage_account_container_name}}" \
+          -backend-config="resource_group_name=$${{vars.BACKEND_AZURE_RESOURCE_GROUP_NAME}}" \
+          -backend-config="storage_account_name=$${{vars.BACKEND_AZURE_STORAGE_ACCOUNT_NAME}}" \
+          -backend-config="container_name=$${{vars.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME}}" \
           -backend-config="key=terraform.tfstate"
 
       - name: Terraform $${{ inputs.terraform_action == 'destroy' && 'Destroy' || 'Apply' }}

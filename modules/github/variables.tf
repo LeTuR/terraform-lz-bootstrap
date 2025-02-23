@@ -1,4 +1,3 @@
-
 variable "repository_name" {
   description = "The name of the infrastructure GitHub repository."
   type        = string
@@ -11,7 +10,7 @@ variable "organization_name" {
 
 variable "environments" {
   description = "Set Github environments"
-  type        = map(map(string))
+  type        = map(string)
 }
 
 variable "team_name" {
@@ -34,12 +33,6 @@ as deployment protection rules and environments.
   default     = true
 }
 
-variable "repository_exists" {
-  description = "If repository already exists, set to true."
-  type        = bool
-  default     = false
-}
-
 variable "require_signed_commits" {
   description = "Enforce signed commits for security"
   type        = bool
@@ -48,20 +41,35 @@ variable "require_signed_commits" {
 
 variable "managed_identity_client_ids" {
   description = "Set managed identity client ids"
-  type        = map(map(string))
+  type        = map(string)
 }
 
-variable "project_landing_zones" {
-  description = "Project landing zones."
-  type = map(object({
-    location                                     = string
-    service_name                                 = string
-    environment_name                             = string
-    azure_subscription_id                        = string
-    azure_tenant_id                              = string
-    backend_azure_resource_group_name            = string
-    backend_azure_storage_account_name           = string
-    backend_azure_storage_account_container_name = string
-    root_module_folder_relative_path             = string
-  }))
+variable "azure_subscription_id" {
+  description = "Set Azure subscription id"
+  type        = string
+}
+
+variable "azure_tenant_id" {
+  description = "Set Azure tenant id"
+  type        = string
+}
+
+variable "backend_azure_resource_group_name" {
+  description = "Set backend Azure resource group name"
+  type        = string
+}
+
+variable "backend_azure_storage_account_name" {
+  description = "Set backend Azure storage account name"
+  type        = string
+}
+
+variable "backend_azure_storage_account_container_name" {
+  description = "Set backend Azure storage account container name"
+  type        = string
+}
+
+variable "root_module_folder_relative_path" {
+  type    = string
+  default = "."
 }

@@ -1,5 +1,5 @@
 ---
-name: Continuous Integration
+name: 01 Azure Landing Zones Continuous Integration
 on:
   pull_request:
     branches:
@@ -9,16 +9,10 @@ on:
 jobs:
   validate_and_plan:
     uses: ${organization_name}/${repository_name_templates}/${ci_template_path}@main
-    name: '${name} CI'
+    name: 'CI'
     permissions:
       id-token: write
       contents: read
       pull-requests: write
     with:
       root_module_folder_relative_path: '${root_module_folder_relative_path}'
-      azure_client_id: "$${{ vars.${azure_client_id} }}"
-      azure_subscription_id: "$${{ vars.${azure_subscription_id} }}"
-      azure_tenant_id: "$${{ vars.${azure_tenant_id} }}"
-      backend_azure_resource_group_name: "$${{ vars.${backend_azure_resource_group_name} }}"
-      backend_azure_storage_account_name: "$${{ vars.${backend_azure_storage_account_name} }}" 
-      backend_azure_storage_account_container_name: "$${{ vars.${backend_azure_storage_account_container_name} }}"

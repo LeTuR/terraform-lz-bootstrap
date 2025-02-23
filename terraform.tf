@@ -11,7 +11,7 @@ terraform {
   }
 }
 
-provider "azurerm" {  
+provider "azurerm" {
   subscription_id = var.landing_zone_subscription_id == "" ? null : var.landing_zone_subscription_id
   features {
     resource_group {
