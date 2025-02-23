@@ -7,7 +7,7 @@ output "backend_azure_storage_account_name" {
 }
 
 output "backend_azure_storage_account_container_name" {
-  value = module.storage.containers["tfstate"].id
+  value = local.state_container_name
 }
 
 output "managed_identity_client_ids" {
