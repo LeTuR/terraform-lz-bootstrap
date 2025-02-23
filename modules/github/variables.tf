@@ -3,6 +3,12 @@ variable "repository_name" {
   type        = string
 }
 
+variable "repository_exists" {
+  description = "Set if the repository already exists"
+  type        = bool
+  default     = false
+}
+
 variable "organization_name" {
   description = "The name of the GitHub organization."
   type        = string

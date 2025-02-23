@@ -19,5 +19,5 @@ output "organization_plan" {
 }
 
 output "repository_name" {
-  value = github_repository.this.name
+  value = local.repository.name
 }
