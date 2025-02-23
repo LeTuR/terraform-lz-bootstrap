@@ -67,11 +67,11 @@ locals {
 
   role_assignments_for_landing_zone_state = {
     (local.plan_key) = {
-      role_definition = "storage_reader"
+      role_definition                  = "storage_reader"
       user_assigned_managed_identities = [local.plan_key]
     }
     (local.apply_key) = {
-      role_definition = "storage_owner"
+      role_definition                  = "storage_owner"
       user_assigned_managed_identities = [local.apply_key]
     }
   }

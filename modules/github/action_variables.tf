@@ -1,12 +1,3 @@
-resource "github_actions_environment_variable" "azure_client_id_enterprise" {
-  for_each      = local.environments
-
-  repository    = local.repository.name
-  environment   = github_repository_environment.this[each.key].environment
-  variable_name = "AZURE_CLIENT_ID"
-  value         = var.managed_identity_client_ids[each.key]
-}
-
 resource "github_actions_variable" "azure_client_id_basic" {
   for_each = local.azure_client_ids
 
