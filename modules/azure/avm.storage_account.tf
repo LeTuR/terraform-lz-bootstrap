@@ -12,12 +12,12 @@ module "storage" {
   min_tls_version               = var.min_tls_version
   shared_access_key_enabled     = var.shared_access_key_enabled
   public_network_access_enabled = var.public_network_access_enabled
-  
+
   network_rules = {
-    bypass = [
-      "AzureServices"
-    ]
+    default_action = "Allow"
+    bypass = [ "AzureServices" ]
   }
+
   managed_identities = {
     system_assigned = true
   }
