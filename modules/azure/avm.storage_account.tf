@@ -15,7 +15,7 @@ module "storage" {
 
   network_rules = {
     default_action = "Allow"
-    bypass = [ "AzureServices" ]
+    bypass         = ["AzureServices"]
   }
 
   managed_identities = {

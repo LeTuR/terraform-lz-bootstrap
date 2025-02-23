@@ -1,5 +1,5 @@
 output "backend_azure_resource_group_name" {
-  value = module.resource_group_state.name 
+  value = module.resource_group_state.name
 }
 
 output "backend_azure_storage_account_name" {

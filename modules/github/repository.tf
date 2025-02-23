@@ -35,7 +35,7 @@ resource "github_repository_file" "this" {
 }
 
 resource "github_branch_protection" "this" {
-  count      = local.activated_features.deployment_protection_rule ? 1 : 0
+  count = local.activated_features.deployment_protection_rule ? 1 : 0
 
   repository_id                   = local.repository_name
   pattern                         = "main"

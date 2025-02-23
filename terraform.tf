@@ -1,4 +1,5 @@
 terraform {
+  required_version = "~>1.10"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -7,6 +8,10 @@ terraform {
     github = {
       source  = "integrations/github"
       version = "~> 5.36"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6"
     }
   }
 }

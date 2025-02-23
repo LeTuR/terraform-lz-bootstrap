@@ -10,9 +10,7 @@ locals {
 locals {
   org_plan = data.github_organization.this.plan
 
-  free_plan       = "free"
-  team_plan       = "team"
-  enterprise_plan = "enterprise"
+  free_plan = "free"
 }
 
 locals {
