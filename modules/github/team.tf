@@ -17,6 +17,6 @@ resource "github_team_membership" "this" {
 
 resource "github_team_repository" "this" {
   team_id    = github_team.this.id
-  repository = local.repository.name
+  repository = local.repository_name
   permission = "push"
 }

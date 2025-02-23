@@ -19,5 +19,5 @@ output "organization_plan" {
 }
 
 output "repository_name" {
-  value = local.repository.name
+  value = local.repository_name
 }

@@ -1,9 +1,12 @@
 ---
-name: 01 Azure Landing Zones Continuous Integration
+name: Continuous Integration
 on:
   pull_request:
     branches:
       - main
+    paths:
+      - '${root_module_folder_relative_path}/**'
+      - 'modules/**'
   workflow_dispatch:
 
 jobs:
@@ -16,3 +19,9 @@ jobs:
       pull-requests: write
     with:
       root_module_folder_relative_path: '${root_module_folder_relative_path}'
+      azure_tenant_id: "$${{ vars.${azure_tenant_id} }}"
+      azure_subscription_id: "$${{ vars.${azure_subscription_id} }}"
+      azure_client_id_plan: "$${{ vars.${azure_client_id_plan} }}"
+      backend_azure_resource_group_name: "$${{ vars.${backend_azure_resource_group_name} }}"
+      backend_azure_storage_account_name: "$${{ vars.${backend_azure_storage_account_name} }}"
+      backend_azure_storage_account_container_name: "$${{ vars.${backend_azure_storage_account_container_name} }}"

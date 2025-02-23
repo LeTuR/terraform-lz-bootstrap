@@ -96,7 +96,7 @@ jobs:
     name: Apply with Terraform
     runs-on:
       ${runner_name}
-    concurrency: ${backend_azure_storage_account_container_name}
+    concurrency: "$${{vars.BACKEND_AZURE_STORAGE_ACCOUNT_NAME}}-$${{vars.BACKEND_AZURE_STORAGE_ACCOUNT_CONTAINER_NAME}}"
     environment: "$${{inputs.environment_name_apply}}"
     permissions:
       id-token: write

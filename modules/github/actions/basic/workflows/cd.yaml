@@ -1,9 +1,12 @@
 ---
-name: 02 Azure Landing Zones Continuous Delivery
+name: Continuous Delivery
 on:
   push:
     branches:
       - main
+    paths:
+      - '${root_module_folder_relative_path}/**'
+      - 'modules/**'
   workflow_dispatch:
     inputs:
       terraform_action:
@@ -25,3 +28,10 @@ jobs:
     with:
       terraform_action: $${{ inputs.terraform_action }}
       root_module_folder_relative_path: '${root_module_folder_relative_path}'
+      azure_tenant_id: "$${{ vars.${azure_tenant_id} }}"
+      azure_subscription_id: "$${{ vars.${azure_subscription_id} }}"
+      azure_client_id_apply: "$${{ vars.${azure_client_id_apply} }}"
+      azure_client_id_plan: "$${{ vars.${azure_client_id_plan} }}"
+      backend_azure_resource_group_name: "$${{ vars.${backend_azure_resource_group_name} }}"
+      backend_azure_storage_account_name: "$${{ vars.${backend_azure_storage_account_name} }}"
+      backend_azure_storage_account_container_name: "$${{ vars.${backend_azure_storage_account_container_name} }}"

@@ -19,6 +19,12 @@ variable "location" {
   type        = string
 }
 
+variable "github_repository_exists" {
+  description = "Set to true if the repository already exists."
+  type        = bool
+  default     = false
+}
+
 variable "github_personal_access_token" {
   description = "The personal access token for GitHub."
   type        = string

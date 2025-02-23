@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+    paths:
+      - '${root_module_folder_relative_path}/**'
+      - 'modules/**'
   workflow_dispatch:
 
 jobs:

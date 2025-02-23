@@ -3,7 +3,7 @@ resource "github_repository_environment" "this" {
   depends_on = [github_team_repository.this]
 
   environment = each.value
-  repository  = local.repository.name
+  repository  = local.repository_name
 
   dynamic "reviewers" {
     for_each = each.key == local.apply_key && length(var.approvers) > 0 ? [1] : []

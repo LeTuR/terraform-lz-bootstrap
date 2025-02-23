@@ -17,8 +17,11 @@ module "resource_names" {
 module "github" {
   source = "./modules/github"
 
+  service_name                                 = var.service_name
+  environment_name                             = var.environment_name
   organization_name                            = var.github_organization_name
   repository_name                              = local.resource_names.version_control_system_repository_infra
+  repository_exists                            = var.github_repository_exists
   approvers                                    = var.github_approvers
   team_name                                    = local.team_name
   require_signed_commits                       = var.github_require_signed_commits

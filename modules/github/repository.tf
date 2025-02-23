@@ -1,8 +1,8 @@
-data "github_repository" "this" {
-  count = var.repository_exists ? 1 : 0
+# data "github_repository" "this" {
+#   count = var.repository_exists ? 1 : 0
 
-  name = var.repository_name
-}
+#   name = var.repository_name
+# }
 
 resource "github_repository" "this" {
   count = var.repository_exists ? 0 : 1
@@ -19,13 +19,13 @@ resource "github_repository" "this" {
 }
 
 locals {
-  repository = var.repository_exists ? data.github_repository.this : github_repository.this
+  repository_name = var.repository_exists ? var.repository_name : github_repository.this[0].name
 }
 
 resource "github_repository_file" "this" {
   for_each = local.pipeline_files
 
-  repository          = local.repository.name
+  repository          = local.repository_name
   file                = each.key
   content             = each.value.content
   commit_author       = local.default_commit_email
@@ -36,9 +36,8 @@ resource "github_repository_file" "this" {
 
 resource "github_branch_protection" "this" {
   count      = local.activated_features.deployment_protection_rule ? 1 : 0
-  depends_on = [github_repository.this]
 
-  repository_id                   = local.repository.name
+  repository_id                   = local.repository_name
   pattern                         = "main"
   enforce_admins                  = true
   required_linear_history         = true

@@ -79,3 +79,13 @@ variable "root_module_folder_relative_path" {
   type    = string
   default = "."
 }
+
+variable "service_name" {
+  description = "The name of the landing zone service."
+  type        = string
+}
+
+variable "environment_name" {
+  description = "The name of the environment."
+  type        = string
+}
