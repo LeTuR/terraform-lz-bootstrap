@@ -1,0 +1,2 @@
+# Storage account must be publicly accessible for public github runner to access it
+AVD-AZU-0012 azurerm_storage_account.this
