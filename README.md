@@ -8,21 +8,31 @@ Goal is to simplify and speed up deployment using best practices.
 | Version Control | Support |
 |-----------------|---------|
 | GitHub | Yes |
-| Azure DevOps | Plan |  
-| Gitlab | No |
+| Azure DevOps | Planned |  
+| Gitlab | Planned |
 
 | Self-hosted Runner | Support |
 |-----------------|---------|
-| GitHub | Plan |
-| Azure DevOps | Plan | 
-| Gitlab  | No | 
+| GitHub | Planned |
+| Azure DevOps | Planned | 
+| Gitlab  | Planned | 
 
 # Getting Started
 
 Configure `landing_zone.auto.tfvars`:
 
+```hcl
+service_name                            = "application"
+environment_name                        = "dev"
+location                                = "francecentral"
+github_personal_access_token            = "secret_password"
+github_organization_name                = "my-org"
+github_approvers                        = ["my@email.com"]
+github_private_repository               = true
+landing_zone_subscription_id            = "00000000-0000-0000-0000-000000000000"
+enable_telemetry                        = false
+github_root_module_folder_relative_path = "environments/dev"
 ```
-
 
 Update `landing_zone.auto.tfvars` file, and run:
 
