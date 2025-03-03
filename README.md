@@ -3,6 +3,12 @@
 This repository is meant to bootstrap infrastructure repository with terraform CI/CD and Azure Subscription.
 Goal is to simplify and speed up deployment using best practices.
 
+# Overview
+
+Below is an overview of the module infrastructure:
+
+![Landing Zone Bootstrap](./figures/diagram-overview.drawio.png)
+
 # Support Status
 
 | Version Control | Support |
